@@ -1,0 +1,870 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Tutorial FastPass Buses | Cybertechno</title>
+    <meta name="description" content="Tutorial interactivo paso a paso para aprender cómo comprar pasajes y transporte para eventos en fastpassbuses.com." />
+    <link rel="icon" type="image/png" href="assets/logo.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,400;0,600;0,700;1,400;1,600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --naranja: #F74704;
+            --naranja-hover: #d83d02;
+            --negro: #111111;
+            --blanco: #ffffff;
+            --gris-progreso: #f0f0f0;
+            --gris-bg: #f7f7f8;
+            --gris-borde: #eaeaea;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Poppins', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body, html {
+            height: 100%;
+            width: 100%;
+            background-color: var(--blanco);
+            color: var(--negro);
+            overflow: hidden;
+            user-select: none;
+        }
+
+        #main-slider {
+            height: 100%;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        /* --- BARRA DE PROGRESO Y CABECERA --- */
+        .progress-header {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 100;
+            background: rgba(255, 255, 255, 0.96);
+            backdrop-filter: blur(8px);
+            border-bottom: 1px solid rgba(0,0,0,0.04);
+        }
+
+        .progress-container {
+            width: 100%;
+            height: 6px;
+            background: var(--gris-progreso);
+        }
+
+        #progress-bar {
+            height: 100%;
+            background: var(--naranja);
+            width: 0%;
+            transition: width 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .header-content {
+            max-width: 500px;
+            margin: 0 auto;
+            padding: 8px 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .header-btn {
+            background: transparent;
+            border: none;
+            color: #444;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 8px;
+            border-radius: 6px;
+            transition: background 0.2s;
+        }
+
+        .header-btn:hover {
+            background: #f0f0f0;
+            color: var(--negro);
+        }
+
+        #step-counter-text {
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--negro);
+            letter-spacing: 0.5px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            text-transform: uppercase;
+        }
+
+        /* --- PANELES --- */
+        .step-panel {
+            display: none;
+            width: 100%;
+            max-width: 500px;
+            height: 100%;
+            padding: 60px 20px 90px;
+            flex-direction: column;
+            justify-content: center; 
+            align-items: center;    
+            text-align: center;
+            overflow-y: auto;
+            animation: fadeIn 0.4s ease-in-out;
+        }
+
+        .step-panel.active {
+            display: flex;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .emoji {
+            font-size: 46px;
+            margin-bottom: 12px;
+            line-height: 1;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.06));
+        }
+
+        /* Logo FastPass en portada */
+        .fastpass-logo {
+            width: 75%;
+            max-width: 260px;
+            height: auto;
+            margin: 15px auto;
+            display: block;
+            object-fit: contain;
+            transition: transform 0.3s ease;
+        }
+        .fastpass-logo:hover {
+            transform: scale(1.03);
+        }
+
+        .badge-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(247, 71, 4, 0.1);
+            color: var(--naranja);
+            padding: 4px 14px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 12px;
+        }
+
+        .step-title {
+            font-size: 24px;
+            font-weight: 800;
+            line-height: 1.25;
+            margin-bottom: 8px;
+            color: var(--negro);
+        }
+
+        .step-text {
+            font-size: 1.05rem;
+            color: var(--negro);
+            line-height: 1.45;
+            margin-bottom: 14px;
+            max-width: 440px;
+        }
+
+        .step-tip {
+            font-size: 12px;
+            color: #555;
+            background: #fff8f5;
+            border: 1px solid #ffe6dc;
+            padding: 6px 14px;
+            border-radius: 8px;
+            margin-top: 8px;
+            max-width: 420px;
+            line-height: 1.35;
+        }
+
+        .bold { font-weight: 700; color: var(--naranja); }
+        .italic { font-style: italic; color: #555; }
+
+        .img-wrapper {
+            width: 100%;
+            max-height: 38vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin: 6px 0 8px;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .step-img {
+            max-width: 92%;
+            max-height: 36vh;
+            border-radius: 12px;
+            border: 2px solid var(--gris-borde);
+            object-fit: contain;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+            transition: transform 0.2s, box-shadow 0.2s;
+            background: #fafafa;
+        }
+
+        .step-img:hover {
+            transform: scale(1.015);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+        }
+
+        .zoom-hint {
+            font-size: 11px;
+            color: #888;
+            margin-top: 6px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        /* --- BOTONES Y NAVEGACIÓN --- */
+        .nav-footer {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            padding: 18px 20px;
+            display: flex;
+            justify-content: space-between;
+            gap: 14px;
+            background: var(--blanco);
+            border-top: 1px solid var(--gris-borde);
+            z-index: 90;
+        }
+
+        .nav-footer-inner {
+            width: 100%;
+            max-width: 500px;
+            margin: 0 auto;
+            display: flex;
+            gap: 12px;
+        }
+
+        .btn {
+            padding: 15px 22px;
+            border-radius: 12px;
+            border: none;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .nav-footer .btn { flex: 1; }
+
+        .btn-compact {
+            width: auto;
+            min-width: 220px;
+            margin-top: 12px;
+        }
+
+        .btn-prev { 
+            background: var(--gris-progreso); 
+            color: var(--negro); 
+        }
+        .btn-prev:hover { 
+            background: #e4e4e4; 
+        }
+
+        .btn-next { 
+            background: var(--naranja); 
+            color: var(--blanco); 
+            box-shadow: 0 2px 8px rgba(247, 71, 4, 0.25);
+        }
+        .btn-next:hover { 
+            background: var(--naranja-hover); 
+        }
+
+        .btn:active { 
+            transform: scale(0.96); 
+        }
+
+        .links-group {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 16px;
+        }
+
+        .chip-btn {
+            color: var(--negro);
+            text-decoration: none;
+            font-size: 12px;
+            font-weight: 600;
+            border: 1px solid #ddd;
+            padding: 8px 14px;
+            border-radius: 20px;
+            background: #fafafa;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: background 0.2s, border-color 0.2s;
+        }
+        .chip-btn:hover {
+            background: #f0f0f0;
+            border-color: #bbb;
+        }
+
+        .hidden { display: none !important; }
+
+        /* --- MODAL PARA ZOOM / LIGHTBOX --- */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 999;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.92);
+            justify-content: center;
+            align-items: center;
+            padding: 16px;
+            backdrop-filter: blur(4px);
+        }
+        .modal.open {
+            display: flex;
+        }
+        .modal-content {
+            max-width: 95vw;
+            max-height: 85vh;
+            border-radius: 10px;
+            object-fit: contain;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.5);
+            border: 1px solid rgba(255,255,255,0.15);
+        }
+        .close-modal {
+            position: absolute;
+            top: 18px;
+            right: 22px;
+            color: #fff;
+            background: rgba(255,255,255,0.2);
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            font-size: 24px;
+            line-height: 1;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s;
+        }
+        .close-modal:hover {
+            background: rgba(255,255,255,0.4);
+        }
+
+        /* --- DRAWER ÍNDICE --- */
+        .drawer-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 990;
+            justify-content: flex-end;
+            backdrop-filter: blur(2px);
+        }
+        .drawer-overlay.open {
+            display: flex;
+        }
+        .drawer {
+            width: 100%;
+            max-width: 340px;
+            height: 100%;
+            background: #fff;
+            display: flex;
+            flex-direction: column;
+            box-shadow: -4px 0 24px rgba(0,0,0,0.15);
+            animation: slideInRight 0.25s ease-out;
+        }
+        @keyframes slideInRight {
+            from { transform: translateX(100%); }
+            to { transform: translateX(0); }
+        }
+        .drawer-header {
+            padding: 16px;
+            border-bottom: 1px solid var(--gris-borde);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-weight: 700;
+            font-size: 15px;
+        }
+        .drawer-list {
+            flex: 1;
+            overflow-y: auto;
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        .drawer-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 12px;
+            border-radius: 10px;
+            border: 1px solid transparent;
+            background: #fafafa;
+            cursor: pointer;
+            text-align: left;
+            transition: all 0.15s;
+        }
+        .drawer-item:hover {
+            background: #f0f0f0;
+        }
+        .drawer-item.active {
+            background: #fff4f0;
+            border-color: var(--naranja);
+            font-weight: 700;
+        }
+        .drawer-item-emoji {
+            font-size: 20px;
+            width: 28px;
+            text-align: center;
+        }
+        .drawer-item-info {
+            flex: 1;
+            overflow: hidden;
+        }
+        .drawer-item-title {
+            font-size: 12px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            color: #333;
+        }
+        .drawer-item.active .drawer-item-title {
+            color: var(--naranja);
+        }
+        .drawer-item-step {
+            font-size: 10px;
+            color: #888;
+            text-transform: uppercase;
+        }
+
+    </style>
+</head>
+<body>
+
+<div id="main-slider">
+    <!-- BARRA Y CONTADOR SUPERIOR -->
+    <header class="progress-header">
+        <div class="progress-container"><div id="progress-bar"></div></div>
+        <div class="header-content">
+            <button class="header-btn" onclick="toggleDrawer()">
+                <span>📑</span> <span id="drawer-btn-label">Índice (0/14)</span>
+            </button>
+            <div id="step-counter-text">PASO: 1 de 14</div>
+        </div>
+    </header>
+
+    <!-- INICIO (Paso 0) -->
+    <div class="step-panel active" id="step-0">
+        <div class="badge-pill">🚌 FASTPASS BUSES BOGOTÁ</div>
+        <h1 class="step-title">¿CÓMO COMPRAR EN <br><span class="bold">FASTPASSBUSES.COM</span>?</h1>
+        <p class="step-text"><i>(Transporte Oficial a Conciertos y Eventos)</i> <br> <b>Guía Paso a Paso • By Cybertechno</b></p>
+        
+        <!-- Logotipo negro monocromático de FastPass -->
+        <img src="assets/logo.png" alt="FastPass Logo" class="fastpass-logo">
+        
+        <button class="btn btn-next btn-compact" onclick="nextStep()">COMENZAR TUTORIAL ➔</button>
+        
+        <div class="links-group">
+            <a href="https://fastpassbuses.com" target="_blank" rel="noopener noreferrer" class="chip-btn">🌐 fastpassbuses.com</a>
+            <a href="https://www.instagram.com/cybertechno.bgt/?hl=es" target="_blank" rel="noopener noreferrer" class="chip-btn">📸 @cybertechno.bgt</a>
+        </div>
+    </div>
+
+    <!-- PASO 1 -->
+    <div class="step-panel" id="step-1">
+        <div class="emoji">🌐</div>
+        <p class="step-text">Ingresa a <span class="bold">fastpassbuses.com</span> desde cualquier navegador en tu celular o computador.</p>
+        <div class="img-wrapper" onclick="openZoom('assets/step_1.png')">
+            <img src="assets/step_1.png" class="step-img" alt="Paso 1">
+            <span class="zoom-hint">🔍 Toca para ampliar</span>
+        </div>
+        <div class="step-tip">💡 Puedes abrir el enlace directamente en una ventana normal o modo incógnito.</div>
+    </div>
+
+    <!-- PASO 2 -->
+    <div class="step-panel" id="step-2">
+        <div class="emoji">🚌</div>
+        <p class="step-text">En la página principal, haz clic en el botón <span class="bold">"Ver eventos con transporte"</span>.</p>
+        <div class="img-wrapper" onclick="openZoom('assets/step_2.png')">
+            <img src="assets/step_2.png" class="step-img" alt="Paso 2">
+            <span class="zoom-hint">🔍 Toca para ampliar</span>
+        </div>
+        <div class="step-tip">💡 Aquí verás las salidas programadas para los mejores conciertos y eventos de Bogotá.</div>
+    </div>
+
+    <!-- PASO 3 -->
+    <div class="step-panel" id="step-3">
+        <div class="emoji">🎶</div>
+        <p class="step-text">Dale clic en <span class="bold">"Ver rutas"</span> dependiendo del evento al que vayas a asistir.</p>
+        <div class="img-wrapper" onclick="openZoom('assets/step_3.png')">
+            <img src="assets/step_3.png" class="step-img" alt="Paso 3">
+            <span class="zoom-hint">🔍 Toca para ampliar</span>
+        </div>
+        <div class="step-tip">💡 Por ejemplo Calvin Harris, Stream Fighters 5, Doom is Back, entre otros.</div>
+    </div>
+
+    <!-- PASO 4 -->
+    <div class="step-panel" id="step-4">
+        <div class="emoji">🔄</div>
+        <p class="step-text">Acá debes seleccionar si necesitas <span class="bold">Solo ida</span>, <span class="bold">Solo regreso</span> o <span class="bold">Ida y vuelta</span>.</p>
+        <div class="img-wrapper" onclick="openZoom('assets/step_4.png')">
+            <img src="assets/step_4.png" class="step-img" alt="Paso 4">
+            <span class="zoom-hint">🔍 Toca para ampliar</span>
+        </div>
+        <div class="step-tip">💡 ¡El combo de Ida y vuelta incluye ahorro especial en la tarifa!</div>
+    </div>
+
+    <!-- PASO 5 -->
+    <div class="step-panel" id="step-5">
+        <div class="emoji">📍</div>
+        <p class="step-text">Se te desplegarán las <span class="bold">rutas disponibles</span> con sus paradas y el <span class="bold">precio final</span>.</p>
+        <div class="img-wrapper" onclick="openZoom('assets/step_5.png')">
+            <img src="assets/step_5.png" class="step-img" alt="Paso 5">
+            <span class="zoom-hint">🔍 Toca para ampliar</span>
+        </div>
+        <div class="step-tip">💡 Rutas hacia Portal 80, Chapinero - Lourdes, Ciudad Salitre, Centro Mayor y más.</div>
+    </div>
+
+    <!-- PASO 6 -->
+    <div class="step-panel" id="step-6">
+        <div class="emoji">🛒</div>
+        <p class="step-text">Una vez hayas seleccionado tu ruta preferida, dale clic a <span class="bold">Comprar</span>.</p>
+        <div class="img-wrapper" onclick="openZoom('assets/step_6.png')">
+            <img src="assets/step_6.png" class="step-img" alt="Paso 6">
+            <span class="zoom-hint">🔍 Toca para ampliar</span>
+        </div>
+        <div class="step-tip">💡 En el recuadro "Tu viaje" verás el resumen del evento, día, servicio y valor total.</div>
+    </div>
+
+    <!-- PASO 7 -->
+    <div class="step-panel" id="step-7">
+        <div class="emoji">📋</div>
+        <p class="step-text">Acá debes llenar el formulario con tus <span class="bold">datos personales</span> (nombre, correo, celular y cupos).</p>
+        <div class="img-wrapper" onclick="openZoom('assets/step_7.png')">
+            <img src="assets/step_7.png" class="step-img" alt="Paso 7">
+            <span class="zoom-hint">🔍 Toca para ampliar</span>
+        </div>
+        <div class="step-tip">💡 Asegúrate de escribir bien tu correo y número celular para recibir tus boletos.</div>
+    </div>
+
+    <!-- PASO 8 -->
+    <div class="step-panel" id="step-8">
+        <div class="emoji">✅</div>
+        <p class="step-text">Una vez llenes los campos obligatorios, autoriza los <span class="italic">términos y condiciones</span> y dale clic al botón <span class="bold">Pagar con Mercado Pago</span>.</p>
+        <div class="img-wrapper" onclick="openZoom('assets/step_8.png')">
+            <img src="assets/step_8.png" class="step-img" alt="Paso 8">
+            <span class="zoom-hint">🔍 Toca para ampliar</span>
+        </div>
+        <div class="step-tip">💡 Tu cupo queda apartado por 7 minutos mientras completas la transacción segura.</div>
+    </div>
+
+    <!-- PASO 9 -->
+    <div class="step-panel" id="step-9">
+        <div class="emoji">💳</div>
+        <p class="step-text">Selecciona tu <span class="bold">método de pago</span>: Mercado Pago, Tarjeta de crédito/débito, Bancolombia o PSE.</p>
+        <div class="img-wrapper" onclick="openZoom('assets/step_9.png')">
+            <img src="assets/step_9.png" class="step-img" alt="Paso 9">
+            <span class="zoom-hint">🔍 Toca para ampliar</span>
+        </div>
+        <div class="step-tip">💡 En el panel lateral verás los detalles de tu compra emitida por Coccoa / FastPass.</div>
+    </div>
+
+    <!-- PASO 10 -->
+    <div class="step-panel" id="step-10">
+        <div class="emoji">🏦</div>
+        <p class="step-text">Si elegiste PSE, selecciona tu <span class="bold">banco</span>, verifica los datos del titular de la cuenta y presiona <span class="bold">Pagar</span>.</p>
+        <div class="img-wrapper" onclick="openZoom('assets/step_10.png')">
+            <img src="assets/step_10.png" class="step-img" alt="Paso 10">
+            <span class="zoom-hint">🔍 Toca para ampliar</span>
+        </div>
+        <div class="step-tip">💡 Serás redirigido a la pasarela bancaria oficial para autorizar el débito.</div>
+    </div>
+
+    <!-- PASO 11 -->
+    <div class="step-panel" id="step-11">
+        <div class="emoji">⏳</div>
+        <p class="step-text">Al comprar, espera unos instantes a que el sistema <span class="bold">confirme tu pago</span> automáticamente.</p>
+        <div class="img-wrapper" onclick="openZoom('assets/step_11.png')">
+            <img src="assets/step_11.png" class="step-img" alt="Paso 11">
+            <span class="zoom-hint">🔍 Toca para ampliar</span>
+        </div>
+        <div class="step-tip">💡 Esto toma solo unos segundos. No cierres la ventana mientras se procesa.</div>
+    </div>
+
+    <!-- PASO 12 -->
+    <div class="step-panel" id="step-12">
+        <div class="emoji">🎟️</div>
+        <p class="step-text">¡Una vez se confirme, ya obtendrás tu <span class="bold">código QR personal</span> con todos los datos de tu ruta!</p>
+        <div class="img-wrapper" onclick="openZoom('assets/step_12.png')">
+            <img src="assets/step_12.png" class="step-img" alt="Paso 12">
+            <span class="zoom-hint">🔍 Toca para ampliar</span>
+        </div>
+        <div class="step-tip">💡 El QR contiene el identificador de tu cupo (ej. CH004) y tu nombre.</div>
+    </div>
+
+    <!-- PASO 13 -->
+    <div class="step-panel" id="step-13">
+        <div class="emoji">📲</div>
+        <p class="step-text">Puedes enviar tu QR a tu <span class="bold">WhatsApp</span> para tenerlo siempre a la mano en tu información personal.</p>
+        <div class="img-wrapper" onclick="openZoom('assets/step_13.png')">
+            <img src="assets/step_13.png" class="step-img" alt="Paso 13">
+            <span class="zoom-hint">🔍 Toca para ampliar</span>
+        </div>
+        <div class="step-tip">💡 También llegará una copia directamente a tu correo electrónico registrado.</div>
+    </div>
+
+    <!-- PASO 14 -->
+    <div class="step-panel" id="step-14">
+        <div class="emoji">✨</div>
+        <p class="step-text">¡Y así se ve tu QR final, el cual puedes añadir directamente a <span class="bold">Apple Wallet</span> y <span class="bold">Google Wallet</span>!</p>
+        <div class="img-wrapper" onclick="openZoom('assets/step_14.png')">
+            <img src="assets/step_14.png" class="step-img" alt="Paso 14">
+            <span class="zoom-hint">🔍 Toca para ampliar</span>
+        </div>
+        <div class="step-tip">💡 ¡Preséntalo al abordar el bus y viaja seguro de ida y vuelta a tu evento!</div>
+
+        <div style="display: flex; flex-direction: column; gap: 8px; width: 100%; max-width: 280px; margin-top: 14px;">
+            <a href="https://fastpassbuses.com" target="_blank" rel="noopener noreferrer" class="btn btn-next" style="text-decoration: none;">IR A FASTPASSBUSES.COM ➔</a>
+            <button class="btn btn-prev" onclick="goToStep(0)">VOLVER AL INICIO ↺</button>
+        </div>
+    </div>
+
+    <!-- BOTONERA INFERIOR -->
+    <footer class="nav-footer hidden" id="nav-bar">
+        <div class="nav-footer-inner">
+            <button class="btn btn-prev" onclick="prevStep()">Anterior</button>
+            <button class="btn btn-next" onclick="nextStep()">Siguiente</button>
+        </div>
+    </footer>
+</div>
+
+<!-- MODAL ZOOM IMAGEN -->
+<div class="modal" id="zoom-modal" onclick="closeZoom()">
+    <button class="close-modal" onclick="closeZoom()">✕</button>
+    <img src="" id="zoom-img" class="modal-content" onclick="event.stopPropagation()">
+</div>
+
+<!-- DRAWER ÍNDICE DE PASOS -->
+<div class="drawer-overlay" id="drawer-overlay" onclick="toggleDrawer()">
+    <div class="drawer" onclick="event.stopPropagation()">
+        <div class="drawer-header">
+            <span>Índice del Tutorial</span>
+            <button style="background: none; border: none; font-size: 20px; cursor: pointer;" onclick="toggleDrawer()">✕</button>
+        </div>
+        <div class="drawer-list" id="drawer-list">
+            <!-- Se genera dinámicamente con JS -->
+        </div>
+    </div>
+</div>
+
+<script>
+    let step = 0;
+    const totalSteps = 14;
+
+    const stepTitles = [
+        "Portada: Cómo comprar en FastPass",
+        "1. Busca fastpassbuses.com",
+        "2. Dale clic en ver eventos",
+        "3. Ver rutas según el evento",
+        "4. Selecciona ida, regreso o ambas",
+        "5. Rutas disponibles y precios",
+        "6. Selecciona y dale a comprar",
+        "7. Llena tus datos personales",
+        "8. Autoriza términos y Mercado Pago",
+        "9. Selecciona método de pago",
+        "10. Confirma datos bancarios / PSE",
+        "11. Confirmación de pago",
+        "12. Tu código QR personal",
+        "13. Envía tu QR a WhatsApp",
+        "14. Añade a Apple / Google Wallet"
+    ];
+
+    const stepEmojis = ["🏠", "🌐", "🚌", "🎶", "🔄", "📍", "🛒", "📋", "✅", "💳", "🏦", "⏳", "🎟️", "📲", "✨"];
+
+    function initDrawer() {
+        const container = document.getElementById('drawer-list');
+        container.innerHTML = '';
+        for (let i = 0; i <= totalSteps; i++) {
+            const item = document.createElement('div');
+            item.className = 'drawer-item' + (i === step ? ' active' : '');
+            item.onclick = () => {
+                goToStep(i);
+                toggleDrawer();
+            };
+            item.innerHTML = `
+                <div class="drawer-item-emoji">${stepEmojis[i]}</div>
+                <div class="drawer-item-info">
+                    <div class="drawer-item-step">${i === 0 ? 'Inicio' : 'Paso ' + i}</div>
+                    <div class="drawer-item-title">${stepTitles[i]}</div>
+                </div>
+            `;
+            container.appendChild(item);
+        }
+    }
+
+    function update() {
+        // Actualizar paneles visibles
+        document.querySelectorAll('.step-panel').forEach((p, i) => {
+            p.classList.toggle('active', i === step);
+        });
+
+        // Actualizar barra de progreso
+        const progressPercent = (step / totalSteps) * 100;
+        document.getElementById('progress-bar').style.width = progressPercent + '%';
+
+        // Contador superior derecho
+        const counterText = document.getElementById('step-counter-text');
+        const nav = document.getElementById('nav-bar');
+        const drawerLabel = document.getElementById('drawer-btn-label');
+
+        if (drawerLabel) {
+            drawerLabel.innerText = `Índice (${step}/${totalSteps})`;
+        }
+
+        if (step > 0 && step <= totalSteps) {
+            counterText.style.opacity = "1";
+            counterText.innerText = `PASO: ${step} de ${totalSteps}`;
+        } else {
+            counterText.style.opacity = "0";
+        }
+
+        // Mostrar / ocultar botonera de navegación
+        if (step === 0 || step === totalSteps) {
+            nav.classList.add('hidden');
+        } else {
+            nav.classList.remove('hidden');
+        }
+
+        // Re-sincronizar drawer items activos
+        document.querySelectorAll('.drawer-item').forEach((item, idx) => {
+            item.classList.toggle('active', idx === step);
+        });
+    }
+
+    function nextStep() {
+        if (step < totalSteps) {
+            step++;
+            update();
+        }
+    }
+
+    function prevStep() {
+        if (step > 0) {
+            step--;
+            update();
+        }
+    }
+
+    function goToStep(s) {
+        if (s >= 0 && s <= totalSteps) {
+            step = s;
+            update();
+        }
+    }
+
+    function openZoom(src) {
+        document.getElementById('zoom-img').src = src;
+        document.getElementById('zoom-modal').classList.add('open');
+    }
+
+    function closeZoom() {
+        document.getElementById('zoom-modal').classList.remove('open');
+    }
+
+    function toggleDrawer() {
+        document.getElementById('drawer-overlay').classList.toggle('open');
+    }
+
+    // Navegación por teclado (Flechas izq/der, Barra espaciadora y Escape)
+    window.addEventListener('keydown', (e) => {
+        const modal = document.getElementById('zoom-modal');
+        const drawer = document.getElementById('drawer-overlay');
+
+        if (modal.classList.contains('open')) {
+            if (e.key === 'Escape') closeZoom();
+            return;
+        }
+
+        if (drawer.classList.contains('open')) {
+            if (e.key === 'Escape') toggleDrawer();
+            return;
+        }
+
+        if (e.key === 'ArrowRight' || e.key === ' ') {
+            e.preventDefault();
+            nextStep();
+        } else if (e.key === 'ArrowLeft') {
+            e.preventDefault();
+            prevStep();
+        }
+    });
+
+    // Soporte táctil / swipe para móviles
+    let touchStartX = null;
+    let touchStartY = null;
+
+    window.addEventListener('touchstart', (e) => {
+        touchStartX = e.touches[0].clientX;
+        touchStartY = e.touches[0].clientY;
+    }, { passive: true });
+
+    window.addEventListener('touchend', (e) => {
+        if (touchStartX === null || touchStartY === null) return;
+        const deltaX = e.changedTouches[0].clientX - touchStartX;
+        const deltaY = e.changedTouches[0].clientY - touchStartY;
+
+        if (Math.abs(deltaX) > 50 && Math.abs(deltaX) > Math.abs(deltaY) * 1.5) {
+            if (deltaX < 0) {
+                nextStep();
+            } else {
+                prevStep();
+            }
+        }
+        touchStartX = null;
+        touchStartY = null;
+    }, { passive: true });
+
+    // Inicialización al cargar la página
+    document.addEventListener('DOMContentLoaded', () => {
+        initDrawer();
+        update();
+    });
+</script>
+
+</body>
+</html>
